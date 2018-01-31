@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Scanner;
  *
  */
 public class FormulaReaderBrianKnapp {
-	private String[][] formula;
+	private int[][] formula;
 	private int variableCount;
 	private int clauseCount;
 	
@@ -23,7 +24,7 @@ public class FormulaReaderBrianKnapp {
 			while (in.hasNextLine()) {
 				String line = in.nextLine();
 				if (foundPCNF) {
-					formula[counter] = line.trim().split("\\s+");
+					formula[counter] = Arrays.stream(line.trim().split("\\s+")).mapToInt(Integer::parseInt).toArray();
 					counter++;
 				}
 				else {
@@ -32,7 +33,7 @@ public class FormulaReaderBrianKnapp {
 						String[] splitPCNF = in.nextLine().trim().split("\\s+");
 						variableCount = Integer.parseInt(splitPCNF[0]);
 						clauseCount = Integer.parseInt(splitPCNF[1]);
-						formula = new String[clauseCount][];
+						formula = new int[clauseCount][];
 					}
 				}
 			}
@@ -50,7 +51,7 @@ public class FormulaReaderBrianKnapp {
 		return clauseCount;
 	}
 	
-	public String[][] getFormula() {
+	public int[][] getFormula() {
 		return formula;
 	}
 }

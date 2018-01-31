@@ -11,11 +11,11 @@ public class DPSolverBrianKnapp {
 		formReader.read(filePath);
 		int variables = formReader.getVariableCount();
 		int clauses = formReader.getClauseCount();
-		String[][] formula = formReader.getFormula();
+		int[][] formula = formReader.getFormula();
 	}
 
 	public void solve() {
-		//TODO
+
 	}
 
 }
