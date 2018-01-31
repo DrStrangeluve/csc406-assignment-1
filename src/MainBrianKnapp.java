@@ -1,3 +1,5 @@
+import java.io.File;
+
 /**
  * Verify argument length is one, else exit
  * Pass the input file to a DPSolver object
@@ -23,7 +25,8 @@ public class MainBrianKnapp {
 			System.exit(1);
 		}
 		else {
-			DPSolverBrianKnapp dpSolver = new DPSolverBrianKnapp(args[0]);
+			File fileName = new File(args[0]);
+			DPSolverBrianKnapp dpSolver = new DPSolverBrianKnapp(fileName);
 			TimerBrianKnapp dpTimer = new TimerBrianKnapp();
 			dpTimer.start();
 			dpSolver.solve();

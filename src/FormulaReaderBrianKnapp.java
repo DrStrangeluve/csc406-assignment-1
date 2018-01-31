@@ -1,10 +1,6 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 /**
  * @author Brian Knapp
@@ -15,41 +11,35 @@ public class FormulaReaderBrianKnapp {
 	private int variableCount;
 	private int clauseCount;
 	
-	public FormulaReaderBrianKnapp() {
+	FormulaReaderBrianKnapp() {
 		
 	}
 	
-	public void read(String fileName) {
-		ArrayList<ArrayList<String>> formulaBuffer = new ArrayList<ArrayList<String>>();
+	public void read(File fileName) {
 		try {
-			FileReader fileReader = new FileReader(fileName);
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-			String line;
-			boolean pcnfFound = false;
-			while ((line = bufferedReader.readLine()) != null) {
-				if (pcnfFound) {
-					ArrayList<String> splitLine = new ArrayList<String>();
-					splitLine.addAll(Arrays.asList(line.trim().split("\\s+")));
-					formulaBuffer.add(splitLine);
+			boolean foundPCNF = false;
+			Scanner in = new Scanner(fileName);
+			int counter = 0;
+			while (in.hasNextLine()) {
+				String line = in.nextLine();
+				if (foundPCNF) {
+					formula[counter] = line.trim().split("\\s+");
+					counter++;
 				}
 				else {
-					Pattern p = Pattern.compile("^p\\s+cnf");
-					Matcher m = p.matcher(line);
-					pcnfFound = m.lookingAt();
-					if (pcnfFound) {
-						String[] splitPCNF = line.trim().split("\\s+");
-						variableCount = Integer.parseInt(splitPCNF[2]);
-						clauseCount = Integer.parseInt(splitPCNF[3]);
+					if (in.findInLine("p cnf") != null) {
+						foundPCNF = true;
+						String[] splitPCNF = in.nextLine().trim().split("\\s+");
+						variableCount = Integer.parseInt(splitPCNF[0]);
+						clauseCount = Integer.parseInt(splitPCNF[1]);
+						formula = new String[clauseCount][];
 					}
 				}
 			}
-			fileReader.close();
 		}
-		catch (IOException e) {
-			
+		catch (FileNotFoundException e){
+				e.printStackTrace();
 		}
-		formula = formulaBuffer.stream().map(u -> u.toArray(new String[0])).toArray(String[][]::new);
 	}
 	
 	public int getVariableCount() {
