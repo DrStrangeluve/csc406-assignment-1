@@ -11,7 +11,7 @@ public class TimerBrianKnapp {
 	/**
 	 * Constructor for the Timer class. Sets the duration to 0 upon instantiation. 
 	 */
-	public TimerBrianKnapp() {
+	TimerBrianKnapp() {
 		 duration = 0;
 	}
 	/**
