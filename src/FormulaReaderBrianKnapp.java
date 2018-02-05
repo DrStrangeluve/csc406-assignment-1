@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 /**
@@ -16,26 +17,45 @@ public class FormulaReaderBrianKnapp {
 		
 	}
 	
-	public void read(File fileName) {
+	public void read(String fileName) {
 		try {
-			boolean foundPCNF = false;
-			Scanner in = new Scanner(fileName);
-			int counter = 0;
-			while (in.hasNextLine()) {
-				String line = in.nextLine();
-				if (foundPCNF) {
-					formula[counter] = Arrays.stream(line.trim().split("\\s+")).mapToInt(Integer::parseInt).toArray();
-					counter++;
+			Scanner in = new Scanner(new File(fileName));
+			while (in.findInLine("p cnf") == null){
+                in.nextLine();
+            }
+			variableCount = in.nextInt();
+			clauseCount = in.nextInt();
+			formula = new int[clauseCount][];
+			int row = 0;
+			int col = 0;
+			LinkedList<Integer> tempList = new LinkedList<>();
+			while (in.hasNextInt()) {
+			    int tempInt = in.nextInt();
+			    tempList.add(tempInt);
+			    if (tempInt == 0) {
+			        formula[row] = new int[col];
+			        row++;
+			        col = 0;
 				}
 				else {
-					if (in.findInLine("p cnf") != null) {
-						foundPCNF = true;
-						String[] splitPCNF = in.nextLine().trim().split("\\s+");
-						variableCount = Integer.parseInt(splitPCNF[0]);
-						clauseCount = Integer.parseInt(splitPCNF[1]);
-						formula = new int[clauseCount][];
-					}
-				}
+			        col++;
+                }
+			}
+			in.close();
+
+			Iterator<Integer> listIter = tempList.iterator();
+			row = 0;
+			col = 0;
+			while (listIter.hasNext()) {
+				int tempInt = listIter.next();
+				if (tempInt == 0) {
+				    row++;
+				    col = 0;
+                }
+                else {
+                    formula[row][col] = tempInt;
+                    col++;
+                }
 			}
 		}
 		catch (FileNotFoundException e){
