@@ -9,7 +9,6 @@ import java.util.LinkedList;
 public class DPSolverBrianKnapp {
     public FormulaBrianKnapp formulaBrianKnapp;
     private LinkedList<Integer> formula;
-    private LinkedList<Integer> finalFormula;
 	
     DPSolverBrianKnapp(String fileName) {
 		formulaBrianKnapp = new FormulaBrianKnapp();
@@ -17,9 +16,9 @@ public class DPSolverBrianKnapp {
 	}
 
 	private void read(String fileName) {
-       formula = formulaBrianKnapp.read(fileName);
-       finalFormula = new LinkedList<>();
-       finalFormula.addAll(formula);
+       formulaBrianKnapp.read(fileName);
+       formula = formulaBrianKnapp.localFormula;
+       formulaBrianKnapp.separateClauses();
     }
 
 	public void solve(FormulaBrianKnapp f) {
@@ -27,44 +26,40 @@ public class DPSolverBrianKnapp {
         if (dpSolver(formula)) {
             System.out.print("\nFormula Satisfiable");
             f.printAssignment();
-            f.print(finalFormula);
+            f.print(formula);
         }
         else {
             System.out.print("\nFormula Unsatisfiable");
             f.printAssignment();
-            f.print(finalFormula);
+            f.print(formula);
         }
 	}
 
 	private boolean dpSolver(LinkedList<Integer> f) {
-//        formulaBrianKnapp.printAssignment();
-//        formulaBrianKnapp.print(f);
-        finalFormula = f;
-        if (formulaBrianKnapp.isFormulaEmpty(f)){
+        formulaBrianKnapp.printAssignment();
+        formulaBrianKnapp.print(f);
+        formulaBrianKnapp.separateClauses();
+        if (formulaBrianKnapp.isFormulaEmpty()){
             return true;
         }
-        else if (formulaBrianKnapp.hasEmptyClause(f)){
+        else if (formulaBrianKnapp.hasEmptyClause()){
             return false;
         }
         else {
-            LinkedList<Integer> recursiveFormula = new LinkedList<>();
-            recursiveFormula.addAll(f);
             int variable = formulaBrianKnapp.firstAvailable();
-            formulaBrianKnapp.assign(variable, formulaBrianKnapp.assignedTrue, recursiveFormula);
-            if (dpSolver(recursiveFormula)) {
+            formulaBrianKnapp.assign(variable, formulaBrianKnapp.assignedTrue);
+            if (dpSolver(f)) {
                 return true;
             }
             else {
-                recursiveFormula.clear();
-                recursiveFormula.addAll(f);
-                formulaBrianKnapp.assign(variable, formulaBrianKnapp.assignedFalse, recursiveFormula);
-                if (dpSolver(recursiveFormula)) {
+                f.removeFirstOccurrence(-1);
+                formulaBrianKnapp.assign(variable, formulaBrianKnapp.assignedFalse);
+                if (dpSolver(f)) {
                     return true;
                 }
                 else {
-                    recursiveFormula.clear();
-                    recursiveFormula.addAll(f);
-                    formulaBrianKnapp.assign(variable, formulaBrianKnapp.na, recursiveFormula);
+                    f.removeFirstOccurrence(-1);
+                    formulaBrianKnapp.assign(variable, formulaBrianKnapp.na);
                     return false;
                 }
             }

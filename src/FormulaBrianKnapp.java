@@ -11,30 +11,32 @@ public class FormulaBrianKnapp {
 	public final int assignedFalse = -1;
 	private int[] assignmentArray;
     private int[][] formula;
+    private List<Integer> tempList;
+    public LinkedList<Integer> localFormula;
 
     FormulaBrianKnapp() {
 		
 	}
 
-	public LinkedList<Integer> read(String fileName) {
+	public void read(String fileName) {
 		FormulaReaderBrianKnapp formulaReaderBrianKnapp = new FormulaReaderBrianKnapp();
 		formulaReaderBrianKnapp.read(fileName);
         int variableCount = formulaReaderBrianKnapp.getVariableCount();
         int clauseCount = formulaReaderBrianKnapp.getClauseCount();
 		formula = formulaReaderBrianKnapp.getFormula();
 
-        LinkedList<Integer> localFormula = new LinkedList<>();
+		localFormula = new LinkedList<>();
 		for (int i = 0; i < clauseCount; i++) {
             localFormula.add(i);
         }
         localFormula.add(-1);
 
 		assignmentArray = new int[variableCount];
-		return localFormula;
+		separateClauses();
 	}
 
-	public boolean isFormulaEmpty(LinkedList<Integer> inFormula) {
-        return (inFormula.getFirst() == -1);
+	public boolean isFormulaEmpty() {
+        return (localFormula.getFirst() == -1);
 	}
 
 	private boolean isClauseEmpty(int clauseNo) {
@@ -47,8 +49,7 @@ public class FormulaBrianKnapp {
         return true;
 	}
 
-	public boolean hasEmptyClause(LinkedList<Integer> inFormula) {
-        List<Integer> tempList = separateClauses(inFormula);
+	public boolean hasEmptyClause() {
         for (int i : tempList) {
             if (!isClauseEmpty(i)) {
                 return false;
@@ -57,9 +58,9 @@ public class FormulaBrianKnapp {
         return true;
 	}
 
-	private List<Integer> separateClauses(LinkedList<Integer> inFormula) {
-        int indexOfFirstSeparator = inFormula.indexOf(-1);
-        return inFormula.subList(0, indexOfFirstSeparator);
+	public void separateClauses() {
+        int indexOfFirstSeparator = localFormula.indexOf(-1);
+        tempList = localFormula.subList(0, indexOfFirstSeparator);
     }
 
 
@@ -72,9 +73,9 @@ public class FormulaBrianKnapp {
         }
 	}
 
-	public void assign(int variable, int assignment, LinkedList<Integer> inFormula) {
+	public void assign(int variable, int assignment) {
         assignmentArray[variable] = assignment;
-        List<Integer> tempList = separateClauses(inFormula);
+        separateClauses();
         List<Integer> unsatisfiedSublist = tempList.subList(0, tempList.size());
         LinkedList<Integer> satisfiedSublist = new LinkedList<>();
 
